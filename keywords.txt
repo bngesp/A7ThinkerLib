@@ -1,0 +1,38 @@
+#######################################
+# A7 GSM/GPS/GPRS module
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+A7lib                  	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin                  	KEYWORD2
+powerCycle             	KEYWORD2
+powerOn
+powerOFF
+
+ConnectGPRS 			KEYWORD2
+
+sendSMS                	KEYWORD2
+readSMS                	KEYWORD2
+
+initHTTP				KEYWORD2
+header					KEYWORD2
+post					KEYWORD2
+get 					KEYWORD2
+getResponseData 		KEYWORD2
+getResponseLength		KEYWORD2
+
+closeHTTP				KEYWORD2
+
+A7                   	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
