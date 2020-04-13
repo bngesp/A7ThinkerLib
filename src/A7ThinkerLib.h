@@ -1,6 +1,6 @@
 #ifndef A7ThinkerLib_h
-    #define A7ThinkerLib_h
 
+    #define A7ThinkerLib_h
     #include <Arduino.h>
     #include "SoftwareSerial.h"
 
@@ -53,6 +53,8 @@ class A7ThinkerLib{
         String _apn;
         int _length;
         int _ResponseLength;
+        float _lat;
+        float _long;
 
         /* data */
         // String read();
@@ -62,7 +64,7 @@ class A7ThinkerLib{
         char setRate(long baudRate);
         byte waitFor(const char *resp1, const char *resp2, int timeout, String *response);
         int freeModem(long timeout);
-
+        
     public:
         A7ThinkerLib(int, int );
         ~A7ThinkerLib();
@@ -86,6 +88,10 @@ class A7ThinkerLib{
         // byte sendSMS(String number, String text);
         // SMSmessage readSMS(int index);
         // int freeModem(long timeout)
+        String getGPSPosition();
+        byte initGPS(int freq);
+        float getLat(String receive_data);
+        float getLong(String receive_data);
 
         bool connectGPRS(String apn);
         bool initHTTP(String host, String path);
@@ -95,8 +101,8 @@ class A7ThinkerLib{
         String getResponseData(String);
         int getResponseLength();
         void closeHTTP();
-
         SoftwareSerial *A7;
+
 };
 
 

@@ -13,8 +13,11 @@ A7ThinkerLib::A7ThinkerLib(int rx_pin, int tx_pin) {
     A7 = new SoftwareSerial(rx_pin, tx_pin, false, 1024);
 #else
     A7 = new SoftwareSerial(rx_pin, tx_pin, false);
+
 #endif
     A7->setTimeout(100);
+    _lat = 0;
+    _long = 0;
 }
 
 A7ThinkerLib::~A7ThinkerLib(){
@@ -45,9 +48,20 @@ byte A7ThinkerLib::begin(long baudRate) {
 
     // Turn SMS indicators off.
     command("AT+CNMI=1,0", "OK", "yy", A7_CMD_TIMEOUT, 2, NULL);
+     // Turn GPS  off.
+    command("AT+GSP=0", "OK", "yy", A7_CMD_TIMEOUT, 2, NULL);
+    command("AT+GPSRD=0", "OK", "yy", A7_CMD_TIMEOUT, 2, NULL);
 
     // Set SMS storage to the GSM modem.
     if (STATUS::OK != command("AT+CPMS=ME,ME,ME", "OK", "yy", A7_CMD_TIMEOUT, 2, NULL))
+        // This may sometimes fail, in which case the modem needs to be
+        // rebooted.
+    {
+        return STATUS::FAILURE;
+    }
+
+    // Set GPS
+    if (STATUS::OK != command("AT+GPS=1", "OK", "yy", A7_CMD_TIMEOUT, 2, NULL))
         // This may sometimes fail, in which case the modem needs to be
         // rebooted.
     {
@@ -534,4 +548,41 @@ String A7ThinkerLib::getResponseData(String body_rcvd_data) {
         logln("bad body content");
     }
     return "\0";
+}
+
+byte A7ThinkerLib::initGPS(int freq){
+
+    dummy_string = "AT+GPSRD="+freq;
+    while (var != STATUS::OK) {
+    //close prior connections if any.
+        //command("AT+CIPCLOSE", "OK", "yy", 2000, 2, NULL); //start up the connection
+
+        var = command("AT+GPSRD=2", "OK", "yy", 3000, 1, NULL); //start up the connection
+        logln(var);
+       // while (freeModem(3000) != 0);
+        // command("AT+CSQ", "OK", "yy", 2000, 2, NULL); //start up the connection
+        // logln("AT+CSQ");
+        delay(200);
+       // while (freeModem(3000) != 0);
+    }
+    return STATUS::OK;
+}
+
+String A7ThinkerLib::getGPSPosition(){
+    String recu = "";
+    if (A7->available()){
+        // recu += (char)A7->read();
+        recu += A7->readStringUntil('\n');
+    }
+
+    //recu.
+    return recu;
+}
+
+float A7ThinkerLib::getLat(String receive_data){
+    return _lat;
+}
+
+float A7ThinkerLib::getLong(String receive_data){
+    return _long;
 }
