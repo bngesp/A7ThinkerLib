@@ -64,6 +64,8 @@ class A7ThinkerLib{
         char setRate(long baudRate);
         byte waitFor(const char *resp1, const char *resp2, int timeout, String *response);
         int freeModem(long timeout);
+        void positionDecimat(String receive_data);
+        String* stringSplit(String trame, char delimiter);
         
     public:
         A7ThinkerLib(int, int );
@@ -90,8 +92,8 @@ class A7ThinkerLib{
         // int freeModem(long timeout)
         String getGPSPosition();
         byte initGPS(int freq);
-        float getLat(String receive_data);
-        float getLong(String receive_data);
+        float getLat();
+        float getLong();
 
         bool connectGPRS(String apn);
         bool initHTTP(String host, String path);

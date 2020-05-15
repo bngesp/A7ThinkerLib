@@ -49,7 +49,8 @@ byte A7ThinkerLib::begin(long baudRate) {
     // Turn SMS indicators off.
     command("AT+CNMI=1,0", "OK", "yy", A7_CMD_TIMEOUT, 2, NULL);
      // Turn GPS  off.
-    command("AT+GSP=0", "OK", "yy", A7_CMD_TIMEOUT, 2, NULL);
+    command("AT+GPS=0", "OK", "yy", A7_CMD_TIMEOUT, 2, NULL);
+
     command("AT+GPSRD=0", "OK", "yy", A7_CMD_TIMEOUT, 2, NULL);
 
     // Set SMS storage to the GSM modem.
@@ -283,9 +284,9 @@ bool A7ThinkerLib::connectGPRS(String apn) {
     retstatus = STATUS::NOTOK;
 
     while (retstatus != STATUS::OK) {
-        retstatus = command((const char *)"AT+CGACT=1,1", "OK", "yy", 10000, 2, NULL);
+        retstatus = command((const char *)"AT+CGACT=1,1", "OK", "yy", 20000, 2, NULL);
         while (freeModem(3000) != 0);
-        // delay(10000);
+        delay(10000);
     }
 
     return retstatus;
@@ -330,8 +331,8 @@ bool A7ThinkerLib::initHTTP(String host, String path) {
     A7->write(AT_END);
     log(AT_END);
 
-    A7->write("User-Agent: A6 Modem");
-    log(F("User-Agent: A6 Modem"));
+    A7->write("User-Agent: A7 Modem");
+    log(F("User-Agent: A7 Modem"));
     A7->write(AT_END);
     log(AT_END);
 
@@ -579,10 +580,38 @@ String A7ThinkerLib::getGPSPosition(){
     return recu;
 }
 
-float A7ThinkerLib::getLat(String receive_data){
+float A7ThinkerLib::getLat(){
     return _lat;
 }
 
-float A7ThinkerLib::getLong(String receive_data){
+float A7ThinkerLib::getLong(){
     return _long;
+}
+
+void A7ThinkerLib::positionDecimat(String receive_data){
+
+}
+
+String* A7ThinkerLib::stringSplit(String trame, char delimiter){
+   
+    int r=0, t=0, n=0;
+    for (int i=0; i < trame.length(); i++)
+        if(trame.charAt(i) == delimiter) n++;
+    if(n == 0) {
+        String tr[1];//= new String[]{trame};
+        tr[0] = trame;
+        return tr;
+    }
+    String sa[n];
+
+    for (int i=0; i < trame.length(); i++)
+    { 
+        if(trame.charAt(i) == delimiter) 
+        { 
+            sa[t] = trame.substring(r, i); 
+            r=(i+1); 
+            t++; 
+        }
+    }
+    return sa;
 }
